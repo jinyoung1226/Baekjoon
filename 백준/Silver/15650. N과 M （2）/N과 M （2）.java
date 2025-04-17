@@ -1,0 +1,39 @@
+import java.io.*;
+
+public class Main {
+
+    static int N;
+    static int M;
+    static int[] arr;
+    static BufferedWriter bw;
+    static BufferedReader br;
+
+    public static void main(String[] args) throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
+        bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String[] data = br.readLine().split(" ");
+        N = Integer.parseInt(data[0]);
+        M = Integer.parseInt(data[1]);
+
+        arr = new int[M];
+        backTracking(1,0);
+        bw.flush();
+
+    }
+
+    private static void backTracking(int at, int depth) throws IOException {
+        if(depth == M) {
+            for (int number : arr) {
+                bw.write(number + " ");
+            }
+            bw.write("\n");
+            return;
+        }
+
+        for (int i = at; i <= N; i++) {
+            arr[depth] = i;
+            backTracking(i+1, depth+1);
+        }
+    }
+}
