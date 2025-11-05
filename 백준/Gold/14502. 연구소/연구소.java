@@ -9,47 +9,46 @@ public class Main {
 
         public Virus(int x, int y) {
             this.x = x;
-            this.y = y;
+            this.y =y;
         }
     }
 
-    static int N, M;
+    static int N,M;
     static int[][] map;
     static int[] dx = {-1, 1, 0, 0};
     static int[] dy = {0, 0, -1, 1};
-    static int cnt = 0;
+    static int max = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String[] data = br.readLine().split(" ");
 
-        N = Integer.parseInt(data[0]);
-        M = Integer.parseInt(data[1]);
+        String[] input = br.readLine().split(" ");
+        N = Integer.parseInt(input[0]);
+        M = Integer.parseInt(input[1]);
 
         map = new int[N][M];
-
         for (int i = 0; i < N; i++) {
-            String[] data1 = br.readLine().split(" ");
+            String[] row_data = br.readLine().split(" ");
             for (int j = 0; j < M; j++) {
-                map[i][j] = Integer.parseInt(data1[j]);
+                map[i][j] = Integer.parseInt(row_data[j]);
             }
         }
 
-        dfs(0);
-        System.out.println(cnt);
+        backTracking(0);
+        System.out.println(max);
+
     }
 
-    static void dfs(int wall_count) {
+    static void backTracking(int wall_count) {
         if (wall_count == 3) {
             bfs();
             return;
         }
-
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (map[i][j] == 0) {
                     map[i][j] = 1;
-                    dfs(wall_count + 1);
+                    backTracking(wall_count + 1);
                     map[i][j] = 0;
                 }
             }
@@ -67,11 +66,11 @@ public class Main {
             }
         }
 
-        int[][] copyMap = new int[N][M];
+        int[][] copy_arr = new int[N][M];
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                copyMap[i][j] = map[i][j];
+                copy_arr[i][j] = map[i][j];
             }
         }
 
@@ -82,9 +81,9 @@ public class Main {
                 int newX = virus.x + dx[i];
                 int newY = virus.y + dy[i];
 
-                if (newX >= 0 && newY >= 0 && newX < N && newY < M) {
-                    if (copyMap[newX][newY] == 0) {
-                        copyMap[newX][newY] = 2;
+                if (newX >= 0 && newX < N && newY >= 0 && newY < M) {
+                    if (copy_arr[newX][newY] == 0) {
+                        copy_arr[newX][newY] = 2;
                         queue.add(new Virus(newX, newY));
                     }
                 }
@@ -92,14 +91,14 @@ public class Main {
         }
 
         int count = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (copy_arr[i][j] == 0) {
+                    count++;
+                }
+            }
+        }
 
-         for (int i = 0; i < N; i++) {
-             for (int j = 0; j < M; j++) {
-                 if (copyMap[i][j] == 0) {
-                     count++;
-                 }
-             }
-         }
-         cnt = Math.max(cnt, count);
+        max = Math.max(count, max);
     }
 }
