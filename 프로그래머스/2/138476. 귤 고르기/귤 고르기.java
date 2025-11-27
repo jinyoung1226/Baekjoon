@@ -2,33 +2,25 @@ import java.util.*;
 
 class Solution {
     
-    static int[] count_arr;
-    
     public int solution(int k, int[] tangerine) {
-        Arrays.sort(tangerine);
-        
-        count_arr = new int[tangerine[tangerine.length-1] + 1];
+        HashMap<Integer, Integer> map = new HashMap<>();
         
         for (int i = 0; i < tangerine.length; i++) {
-            count_arr[tangerine[i]] += 1;
+            map.put(tangerine[i], map.getOrDefault(tangerine[i], 0) + 1);
         }
         
-        Integer[] count_arr1 = new Integer[count_arr.length];
-        for (int i = 0; i < count_arr1.length; i++) {
-            count_arr1[i] = count_arr[i];
+        List<Integer> list = new ArrayList<>();
+        for (Integer i : map.keySet()) {
+            list.add(i);
         }
         
-        Arrays.sort(count_arr1, Collections.reverseOrder());
+        Collections.sort(list, (o1, o2) -> map.get(o2) - map.get(o1));
         
         int count = 0;
-        int tmp = 0;
-        for (int i = 0; i < count_arr1.length; i++) {
-            tmp += count_arr1[i];
-            if(tmp < k) {
-                count++;
-                continue;
-            } else {
-                count++;
+        for (Integer i : list) {
+            k -= map.get(i);
+            count++;
+            if (k <= 0) {
                 break;
             }
         }
