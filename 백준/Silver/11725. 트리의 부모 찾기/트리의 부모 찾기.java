@@ -1,48 +1,48 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
 
-    static List<List<Integer>> graph = new ArrayList<>();
+    static int N;
+    static List<Integer>[] graph;
+    static int[] result;
     static boolean[] visited;
-    static int[] results;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        N = Integer.parseInt(br.readLine());
+        graph = new ArrayList[N+1];
+        result = new int[N+1];
+        visited = new boolean[N+1];
 
-        int N = Integer.parseInt(br.readLine());
-        visited = new boolean[N + 1];
-        results = new int[N + 1];
-
-        for (int i = 0; i < N + 1; i++) {
-            graph.add(new ArrayList<>());
+        for (int i = 1; i < graph.length; i++) {
+            graph[i] = new ArrayList<>();
         }
 
-        for (int i = 0; i < N - 1; i++) {
+        for (int i = 1; i < N; i++) {
             String[] data = br.readLine().split(" ");
-            int u = Integer.parseInt(data[0]);
-            int v = Integer.parseInt(data[1]);
-            graph.get(u).add(v);
-            graph.get(v).add(u);
+            int a = Integer.parseInt(data[0]);
+            int b = Integer.parseInt(data[1]);
+            graph[a].add(b);
+            graph[b].add(a);
         }
 
         DFS(1);
 
-        for (int i = 2; i < N + 1; i++) {
-            sb.append(results[i]).append("\n");
+        StringBuilder sb = new StringBuilder();
+        for (int i =  2; i < result.length; i++) {
+            sb.append(result[i] + "\n");
         }
-        System.out.println(sb);
 
+        System.out.println(sb.toString());
     }
 
     static void DFS(int parent) {
         visited[parent] = true;
 
-        for (int child : graph.get(parent)) {
-            if(!visited[child]) {
-                results[child] = parent;
+        for (Integer child : graph[parent]) {
+            if (!visited[child]) {
+                result[child] = parent;
                 DFS(child);
             }
         }
