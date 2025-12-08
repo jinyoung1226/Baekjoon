@@ -72,7 +72,7 @@ public class Main {
             }
             if (visited[next]) { // 직전의 부모가 아닌 다른 노드 중에 방문한 것이 있다? 그럼 사이클
                 hasCycle = true;
-                continue;
+                return;
             }
 
             DFS(next, v);
