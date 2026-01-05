@@ -40,16 +40,7 @@ jobs:
 
           # 내 풀이만 복사 (충돌 방지)
           mkdir -p solutions/$USERNAME
-          rsync -av --delete \
-
-        # 각자 코드가 저장되는 폴더를 지정해줘야 합니다.
-        # 저는 백준만 풀기 때문에 플랫폼 기준으로 나뉘도록 설정해서 백준으로 설정해줬습니다.
-        # 만약 프로그래머스 폴더에 저장된다면
-        # $GITHUB_WORKSPACE/프로그래머스/ \ 여야 합니다.
-        # 백준 프로그래머스 모두 사용한다고 하면
-        # $GITHUB_WORKSPACE/ \ 만 해도 괜찮을 것 같습니다.
-            $GITHUB_WORKSPACE/ \
-            solutions/$USERNAME/
+          rsync -av --delete "$GITHUB_WORKSPACE/" "solutions/$USERNAME/"
 
           git add solutions/$USERNAME
 
