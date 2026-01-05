@@ -13,20 +13,21 @@ jobs:
       - name: Checkout my repository
         uses: actions/checkout@v4
 
-      # 3️⃣ SSH 설정 (Deploy Key)
+      # 2️⃣ SSH 설정 (Deploy Key)
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.ORGANIZER_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          printf "%s\n" "${{ secrets.ORGANIZER_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          
-      - name: Setup whoami
+
+      # 3️⃣ Git 사용자 설정
+      - name: Setup git user
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-      # 4️⃣ organizer 레포로 동기화 (내 브랜치)
+      # 4️⃣ organizer 레포로 동기화
       - name: Sync to organizer repository
         env:
           ORG_REPO: git@github.com:SKALA-Cloud-team-2/algorithm-study.git
@@ -35,14 +36,17 @@ jobs:
           git clone $ORG_REPO algorithm-study
           cd algorithm-study
 
-          # 내 전용 브랜치 (없으면 생성)
+          # 내 전용 브랜치
           git checkout -B user/$USERNAME
+          git pull origin user/$USERNAME --rebase || true
 
-          # 내 풀이만 복사 (충돌 방지)
+          # 내 풀이만 복사 (.git 제외 필수)
           mkdir -p solutions/$USERNAME
-          rsync -av --delete "$GITHUB_WORKSPACE/" "solutions/$USERNAME/"
+          rsync -av --delete \
+            --exclude='.git' \
+            "$GITHUB_WORKSPACE/" \
+            "solutions/$USERNAME/"
 
           git add solutions/$USERNAME
-
           git commit -m "sync: update solutions from $USERNAME" || exit 0
           git push origin user/$USERNAME
