@@ -1,0 +1,57 @@
+name: CI and Sync to Organizer
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  ci-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 내 레포 체크아웃
+      - name: Checkout my repository
+        uses: actions/checkout@v4
+
+      # 3️⃣ SSH 설정 (Deploy Key)
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORGANIZER_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+      - name: Setup whoami
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      # 4️⃣ organizer 레포로 동기화 (내 브랜치)
+      - name: Sync to organizer repository
+        env:
+          ORG_REPO: git@github.com:SKALA-Cloud-team-2/algorithm-study.git
+          USERNAME: ${{ github.actor }}
+        run: |
+          git clone $ORG_REPO algorithm-study
+          cd algorithm-study
+
+          # 내 전용 브랜치 (없으면 생성)
+          git checkout -B user/$USERNAME
+
+          # 내 풀이만 복사 (충돌 방지)
+          mkdir -p solutions/$USERNAME
+          rsync -av --delete \
+
+        # 각자 코드가 저장되는 폴더를 지정해줘야 합니다.
+        # 저는 백준만 풀기 때문에 플랫폼 기준으로 나뉘도록 설정해서 백준으로 설정해줬습니다.
+        # 만약 프로그래머스 폴더에 저장된다면
+        # $GITHUB_WORKSPACE/프로그래머스/ \ 여야 합니다.
+        # 백준 프로그래머스 모두 사용한다고 하면
+        # $GITHUB_WORKSPACE/ \ 만 해도 괜찮을 것 같습니다.
+            $GITHUB_WORKSPACE/ \
+            solutions/$USERNAME/
+
+          git add solutions/$USERNAME
+
+          git commit -m "sync: update solutions from $USERNAME" || exit 0
+          git push origin user/$USERNAME
