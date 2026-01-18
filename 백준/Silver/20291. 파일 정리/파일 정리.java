@@ -4,9 +4,7 @@ import java.util.*;
 public class Main {
 
     static int N;
-    static HashMap<String,Integer> map = new HashMap<>();
-    static List<String> list = new ArrayList<>();
-    static HashSet<String> set = new HashSet<>();
+    static TreeMap<String, Integer> map = new TreeMap<>();
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,29 +12,21 @@ public class Main {
         N = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < N; i++) {
-            String[] str = br.readLine().split("\\.");
-            String extendName = str[1];
+            String fileName = br.readLine();
+            int idx = fileName.indexOf(".");
+
+            String extendName = fileName.substring(idx+1);
 
             map.put(extendName, map.getOrDefault(extendName, 0) + 1);
-            set.add(str[1]);
         }
-
-
-        for (String s :set) {
-            list.add(s);
-        }
-
-        Collections.sort(list, (o1, o2) -> {
-            return o1.compareTo(o2);
-        });
 
         StringBuilder sb = new StringBuilder();
-        for (String extend : list) {
-            sb.append(extend);
-            sb.append(" ");
-            sb.append(map.get(extend));
-            sb.append("\n");
+
+        for (String key : map.keySet()) {
+            sb.append(key + " " + map.get(key) +"\n");
         }
+
         System.out.println(sb);
+
     }
 }
