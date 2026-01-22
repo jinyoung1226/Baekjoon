@@ -34,8 +34,17 @@ jobs:
           git clone $ORG_REPO algorithm-study
           cd algorithm-study
 
-          # 내 전용 브랜치 (없으면 생성, 있으면 현재 위치로 강제 리셋)
-          git checkout -B user/$USERNAME
+          git fetch origin
+
+          # remote branch로 이동 없으면 복사
+          if git show-ref --verify --quiet refs/remotes/origin/$BRANCH; then
+            # origin에 존재하면 그 브랜치를 그대로 가져옴
+            git checkout -B $BRANCH origin/$BRANCH
+          else
+            # origin에 없으면 main 기준으로 새 브랜치 생성
+            git checkout -B $BRANCH main
+            git push -u origin $BRANCH
+          fi
 
           # 내 풀이만 복사 (충돌 방지)
           mkdir -p solutions/$USERNAME
