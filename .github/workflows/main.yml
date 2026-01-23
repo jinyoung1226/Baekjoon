@@ -53,7 +53,7 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          
+
       - name: Sync to organizer repository
         env:
           ORG_REPO: git@github.com:SKALA-Cloud-team-2/algorithm-study.git
@@ -61,32 +61,17 @@ jobs:
         run: |
           git clone $ORG_REPO algorithm-study
           cd algorithm-study
-
-          git fetch origin
-
-          # remote branch로 이동 없으면 복사
-          if git show-ref --verify --quiet refs/remotes/origin/$BRANCH; then
-            # origin에 존재하면 그 브랜치를 그대로 가져옴
-            git checkout -B $BRANCH origin/$BRANCH
-          else
-            # origin에 없으면 main 기준으로 새 브랜치 생성
-            git checkout -B $BRANCH main
-            git push -u origin $BRANCH
-          fi
-
-          # 내 풀이만 복사 (충돌 방지)
+      
           mkdir -p solutions/$USERNAME
-          
-          # [전체 동기화 설정]
+      
           rsync -av --delete \
             --exclude='.*' \
             --exclude='algorithm-study' \
             $GITHUB_WORKSPACE/ \
             solutions/$USERNAME/
-
+      
           git add solutions/$USERNAME
-
           git commit -m "sync: update solutions from $USERNAME" || exit 0
-          
-          # 👇 [수정됨] --force 옵션 추가
-          git push origin user/$USERNAME --force
+      
+          # ⭐ 핵심 한 줄
+          git push origin HEAD:user/$USERNAME --force
