@@ -26,6 +26,34 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           
+     name: CI and Sync to Organizer
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  ci-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 내 레포 체크아웃
+      - name: Checkout my repository
+        uses: actions/checkout@v4
+
+      # 3️⃣ SSH 설정 (Deploy Key)
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORGANIZER_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+      - name: Setup whoami
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          
       - name: Sync to organizer repository
         env:
           ORG_REPO: git@github.com:SKALA-Cloud-team-2/algorithm-study.git
