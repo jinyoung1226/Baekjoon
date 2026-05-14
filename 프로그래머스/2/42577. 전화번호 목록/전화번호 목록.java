@@ -2,13 +2,7 @@ import java.util.*;
 
 class Solution {
     public boolean solution(String[] phone_book) {
-        
-        if (phone_book.length == 1) {
-            return true;
-        }
-        
         Arrays.sort(phone_book);
-
         
         boolean result = true;
         
@@ -20,5 +14,6 @@ class Solution {
         }
         
         return result;
+        
     }
 }
