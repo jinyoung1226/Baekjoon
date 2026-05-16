@@ -2,38 +2,51 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int[] progresses, int[] speeds) {
-        Queue<Integer> queue = new LinkedList<>();
-        
-        for (int i = 0; i < progresses.length; i++) {
-            Integer count = (int) Math.ceil((100.0 - progresses[i]) / speeds[i]);
-            queue.add(count);
-        }
-        
-        List<Integer> list = new ArrayList<>();
-        
-        while(!queue.isEmpty()) {
-            int count = 1;
-            int num = queue.poll();
-            if (queue.isEmpty()) {
-                list.add(count);
-                break;
+        int[] day = new int[speeds.length];
+        for (int i = 0; i < speeds.length; i++) {
+            int left_progress = 100 - progresses[i];
+            int left_day = 0;
+            
+            while (left_progress > 0) {
+                left_progress -= speeds[i];
+                left_day++;
             }
-            while(true) {
-                if (queue.peek() != null && queue.peek() <= num) {
-                    queue.poll();
-                    count++;
-                } else {
-                    break;
-                }
-            } 
-            list.add(count);
+            
+            day[i] = left_day;
         }
         
-        int[] result = new int[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            result[i] = list.get(i);
+        Queue<Integer> queue = new LinkedList<>();
+        List<Integer> answer = new ArrayList<>();
+        
+        for (int i = 0; i < day.length; i++) {
+            if (queue.isEmpty()) {
+                queue.add(day[i]);
+            } else if (queue.peek() >= day[i]) {
+                queue.add(day[i]);
+            } else {
+                int count = 0;
+                while (!queue.isEmpty()) {
+                    int a = queue.poll();
+                    count++;
+                }
+                answer.add(count);
+                queue.add(day[i]);
+            }
         }
-        return result;
+        
+        int count = 0;
+        while (!queue.isEmpty()) {
+            int a = queue.poll();
+            count++;
+        }
+        answer.add(count);
+        
+        System.out.println(answer);
+        int[] arr = new int[answer.size()];
+        for (int i = 0; i < answer.size(); i++) {
+            arr[i] = answer.get(i);
+        }
+        
+        return arr;
     }
-    
 }
