@@ -1,48 +1,39 @@
 import java.util.*;
-class Solution {
-    
-    static int count;
-    public int solution(int[] elements) {
-        HashSet<Integer> set = new HashSet<>();
-        
-        int length = elements.length;
-        
-        // 슬라이딩 윈도우
-        // i = 0, 1, 2, 3, 4..
-        for (int i = 0; i < length; i++) {
-            int start = 0;
-            int end = start + i;
-            
-            while (start < length) {
-                if (end < length) {
-                    int tmp = 0;
-                    for (int j = start; j <= end; j++) {
-                        tmp += elements[j];
-                    }
-                    set.add(tmp);
 
-                    start++;
-                    end++;
-                } else {
-                    // end가 기존 배열 범위를 넘어서면 두개로 쪼개서 반복문 진행
-                    int tmp = 0;
-                    for (int j = start; j <= length-1; j++) {
-                        tmp += elements[j];
-                    }
-                    
-                    for (int j = 0; j <= (end % length); j++) {
-                        tmp += elements[j];
-                    }
-                    
-                    set.add(tmp);
-                    
-                    start++;
-                    end++;
-                }
-            }
+class Solution {
+    HashSet<Integer> set = new HashSet<>();
+    public int solution(int[] elements) {
+        for (int i = 0; i < elements.length; i++) {
+            set.add(elements[i]);
         }
         
-        int result = set.size();
-        return result;
+        for (int i = 0; i < elements.length-1; i++) {
+            int left = 0;
+            int right = i+1;
+            
+            while (left < elements.length) {
+                if (left > right) {
+                    int sum = 0;
+                    for (int j = left; j < elements.length; j++) {
+                        sum += elements[j];
+                    }
+                    for (int j = 0; j <= right; j++) {
+                        sum += elements[j];
+                    }
+                    set.add(sum);
+                } else {
+                    int sum = 0;
+                    for (int j = left; j <= right; j++) {
+                        sum += elements[j];
+                    }
+                    set.add(sum);
+                }
+                
+                left++;
+                right = (right+1) % elements.length;
+            }
+        }
+        return set.size();
+        
     }
 }
