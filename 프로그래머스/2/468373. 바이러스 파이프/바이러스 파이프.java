@@ -46,24 +46,22 @@ class Solution {
         int infection_count = 1;
         List<Integer> list = new ArrayList<>();
         list.add(infection);
+        visited[infection] = true;
         
         for (int pipe : arr) {
-            int size = list.size();
-            for (int i = 0; i < size; i++) {
-                int node = list.get(i);
-                Queue<Integer> q = new LinkedList<>();
+            Queue<Integer> q = new LinkedList<>();
+            for (Integer node : list) {
                 q.add(node);
-                visited[node] = true; 
-                while (!q.isEmpty()) {
-                    int real_node = q.poll();
-                    
-                    for (int[] connect : graph[real_node]) {
-                        if (!visited[connect[0]] && connect[1] == pipe) {
-                            visited[connect[0]] = true;
-                            infection_count++;
-                            q.add(connect[0]);
-                            list.add(connect[0]);
-                        }
+            }
+            
+            while (!q.isEmpty()) {
+                int real_node = q.poll();
+                for (int[] connect : graph[real_node]) {
+                    if (!visited[connect[0]] && connect[1] == pipe) {
+                        visited[connect[0]] = true;
+                        infection_count++;
+                        q.add(connect[0]);
+                        list.add(connect[0]);
                     }
                 }
             }
