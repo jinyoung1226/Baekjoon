@@ -10,8 +10,7 @@ class Solution {
         HashSet<Integer> set = new HashSet<>();
         int idx = 0;
         int result = 0;
-        while (map.size() != 0) {
-            if (idx > topping.length - 1) break;
+        while (idx < topping.length - 1) {
             
             int key = topping[idx];
             
