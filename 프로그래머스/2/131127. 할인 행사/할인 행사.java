@@ -1,60 +1,58 @@
 import java.util.*;
 
 class Solution {
+    HashMap<String, Integer> check_want_map = new HashMap<>();
+    HashMap<String, Integer> save_want_map = new HashMap<>();
+    int leftIdx = 0;
+    int rightIdx = 9;
+    int result = 0;
+    
     public int solution(String[] want, int[] number, String[] discount) {
-        // result가 0인 조건 미리 체크
-        HashSet<String> discount_set = new HashSet<>(Arrays.asList(discount));
-        
-        boolean check = false;
-        for (String str : want) {
-            if (!discount_set.contains(str)) {
-                check =true;
-                break;
-            }
+        for (int i = 0; i < want.length; i++) {
+            check_want_map.put(want[i], number[i]);
         }
         
-        if (check) {
-            return 0;
+        for (int i = 0; i < 10; i++) {
+            save_want_map.put(discount[i], save_want_map.getOrDefault(discount[i], 0) + 1);
         }
         
-        // 슬라이딩 윈도우(end가 배열 index를 넘을 때까지 while문 돌리기)
-        int start = 0;
-        int end = 9;
-        int result = 0; 
-        
-        while (end <= discount.length - 1) {
-            // number 배열 복사
-            int[] number_copy = new int[number.length];
-            for (int i = 0; i < number.length; i++) {
-                number_copy[i] = number[i];
-            }
-            
-            // start ~ end까지 순회해서 만족하는지 파악
-            for (int i = start; i <= end; i++) {
-                String now = discount[i];
-                
-                for (int j = 0; j < want.length; j++) {
-                    if (want[j].equals(now)) {
-                        number_copy[j]--;
-                        break;
-                    }
+        while (rightIdx < discount.length) {
+            boolean check = true;
+            for (Map.Entry<String, Integer> entry : save_want_map.entrySet()) {
+                if (!check_want_map.containsKey(entry.getKey())) {
+                    check = false;
+                    break;
                 }
-            }
-            
-            boolean check1 = true;
-            for (int i : number_copy) {
-                if (i != 0) {
-                    check1 = false;
+                
+                if (entry.getValue() != check_want_map.get(entry.getKey())) {
+                    check = false;
                     break;
                 }
             }
             
-            if (check1) {
+            if (check) {
                 result++;
             }
             
-            start++;
-            end++;
+            if (rightIdx == discount.length - 1) {
+                break;
+            }
+            rightIdx++;
+            
+            
+            if (save_want_map.get(discount[leftIdx]) >= 2) {
+                save_want_map.put(discount[leftIdx], save_want_map.get(discount[leftIdx]) - 1);
+            } else {
+                save_want_map.remove(discount[leftIdx]);
+            }
+            
+            if (save_want_map.containsKey(discount[rightIdx])) {
+                save_want_map.put(discount[rightIdx], save_want_map.get(discount[rightIdx]) + 1);
+            } else {
+                save_want_map.put(discount[rightIdx], 1);
+            }
+            
+            leftIdx++;
         }
         
         return result;
