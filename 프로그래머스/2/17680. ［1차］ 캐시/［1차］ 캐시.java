@@ -16,8 +16,7 @@ class Solution {
         for (String city : cities) {
             // cache hit인 경우
             if (list.contains(city)) {
-                int idx = list.indexOf(city);
-                list.remove(idx);
+                list.remove(city);
                 list.add(city);
                 time++;
             } else { // cache miss인 경우
