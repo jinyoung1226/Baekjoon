@@ -61,7 +61,7 @@ class Solution {
         } else {
             double b = (double) same / (double) union * 65536;
             
-            return (int) b;
+            return (int)Math.floor(b);
         }
         
 
