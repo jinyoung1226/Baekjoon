@@ -20,12 +20,9 @@ class Solution {
             if (stack.peek().num >= point.num) {
                 stack.push(point);
             } else {
-                while (stack.peek().num < point.num) {
+                while (!stack.isEmpty() && stack.peek().num < point.num) {
                     Point out = stack.pop();
                     result[out.idx] = point.num;
-                    if (stack.isEmpty()) {
-                        break;
-                    }
                 }
                 stack.push(point);
             }
