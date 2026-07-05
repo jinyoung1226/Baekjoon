@@ -25,7 +25,10 @@ class Solution {
             for (int i = 0; i < 3; i++) {
                 if (i == 0) {
                     int next_node = node + n;
-                    if (next_node <= y && !visited[next_node]) {
+                    // visited를 먼저 체크하면 ArrayIndexOutofBoundException 발생
+                    // visited를 초과하지 않게 먼저 y를 초과하는지 먼저 체크하는 조건문이 앞으로 이동해야 함
+                    // 조건문 안에서도 어떤 걸 먼저 사용해야할지 체크까지 하는 습관을 들이자. 
+                    if (next_node <= y && !visited[next_node]) { 
                         visited[next_node] = true;
                         q.add(new int[]{next_node, oper_count+1});
                     }
