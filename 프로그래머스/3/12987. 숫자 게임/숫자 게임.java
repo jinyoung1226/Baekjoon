@@ -2,6 +2,7 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] A, int[] B) {
+        // 그리디 + 투 포인터(두 배열에 투 포인터도 쓸 수 있다는 걸 인지 해야 한다.)
         int A_idx = 0;
         int B_idx = 0;
         int cnt = 0;
