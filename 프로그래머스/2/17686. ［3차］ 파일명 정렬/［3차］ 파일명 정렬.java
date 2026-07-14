@@ -51,27 +51,13 @@ class Solution {
         }
         
         Arrays.sort(arr, (o1, o2) -> {
-            if (o1.get(1).toLowerCase().compareTo(o2.get(1).toLowerCase()) > 0) {
-                return 1;
-            }
+            int a = o1.get(1).toLowerCase().compareTo(o2.get(1).toLowerCase());
+            if (a != 0) return a;
             
-            if (o1.get(1).toLowerCase().compareTo(o2.get(1).toLowerCase()) < 0) {
-                return -1;
-            }
+            int b = Integer.compare(Integer.parseInt(o1.get(2)), Integer.parseInt(o2.get(2)));
+            if (b != 0) return b;
             
-            if (Integer.compare(Integer.parseInt(o1.get(2)), Integer.parseInt(o2.get(2))) > 0) {
-                return 1;
-            }
-            
-            if (Integer.compare(Integer.parseInt(o1.get(2)), Integer.parseInt(o2.get(2))) < 0) {
-                return -1;
-            }
-            
-            if (Integer.compare(Integer.parseInt(o1.get(0)), Integer.parseInt(o2.get(0))) > 0) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return Integer.compare(Integer.parseInt(o1.get(0)), Integer.parseInt(o2.get(0)));
         });
         
         for (int i = 0; i < arr.length; i++) {
