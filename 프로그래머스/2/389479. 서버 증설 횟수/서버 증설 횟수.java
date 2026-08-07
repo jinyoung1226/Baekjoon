@@ -8,11 +8,18 @@ class Solution {
         
         while (time <= 23) {
             int serverCount = 0;
+            List<Integer> toRemove = new ArrayList<>();
             for (Map.Entry<Integer, Integer> entry : server.entrySet()) {
                 int end = entry.getValue();
                 if (time <= end) {
                     serverCount++;
+                } else {
+                    toRemove.add(entry.getKey());
                 }
+            }
+            
+            for (int id : toRemove) {
+                server.remove(id);
             }
             
             if (players[time] == 0) {
