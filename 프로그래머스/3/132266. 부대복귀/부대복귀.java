@@ -2,10 +2,12 @@ import java.util.*;
 
 class Solution {
     List<Integer>[] roadMap;
+    int[] dist;
     boolean[] visited;
     
     public int[] solution(int n, int[][] roads, int[] sources, int destination) {
         roadMap = new ArrayList[n+1];
+        dist = new int[n+1];
         visited = new boolean[n+1];
         for (int i = 1; i < roadMap.length; i++) {
             roadMap[i] = new ArrayList<>();
@@ -16,44 +18,43 @@ class Solution {
             roadMap[v1].add(v2);
             roadMap[v2].add(v1);
         }
+        Arrays.fill(dist, Integer.MAX_VALUE);
         
-        int[] resultArr = new int[sources.length];
+        dijkstra(destination);
+        for (int i = 0; i < dist.length; i++) {
+            if (dist[i] == Integer.MAX_VALUE) {
+                dist[i] = -1;
+            }
+        }
+        int[] result = new int[sources.length];
         for (int i = 0; i < sources.length; i++) {
-            int result = bfs(sources[i], destination);
-            resultArr[i] = result;
-            visited = new boolean[n+1];
+            result[i] = dist[sources[i]];
         }
         
-        return resultArr;
+        
+        return result;
     }
     
-    public int bfs(int start, int destination) {
-        boolean flag = false;
-        int result = 0;
-        Queue<int[]> q = new LinkedList<>();
-        visited[start] = true;
-        q.add(new int[]{start, 0});
+    public void dijkstra(int start) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]);
+        pq.add(new int[]{start, 0});
+        dist[start] = 0;
         
-        while(!q.isEmpty()) {
-            int[] now = q.poll();
-            if (now[0] == destination) {
-                flag = true;
-                result = now[1];
-                break;
+        while(!pq.isEmpty()) {
+            int[] now = pq.poll();
+            
+            if (!visited[now[0]]) {
+                visited[now[0]] = true;
+            } else {
+                continue;
             }
             
             for (Integer next : roadMap[now[0]]) {
-                if (!visited[next]) {
-                    visited[next] = true;
-                    q.add(new int[]{next, now[1] + 1});
+                if (dist[next] > now[1] + 1) {
+                    dist[next] = now[1] + 1;
+                    pq.add(new int[]{next, dist[next]});
                 }
             }
-        }
-        
-        if (flag) {
-            return result;
-        } else {
-            return -1;
         }
     }
 }
