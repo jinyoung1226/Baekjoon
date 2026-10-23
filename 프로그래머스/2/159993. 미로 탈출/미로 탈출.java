@@ -1,114 +1,81 @@
 import java.util.*;
 
 class Solution {
-    class Point {
-        int x;
-        int y;
-        int cost;
-        String str;
-        
-        public Point(int x, int y, int cost, String str) {
-            this.x = x;
-            this.y = y;
-            this.cost = cost;
-            this.str = str;
-        }
-    }
+    String[][] board;
+    boolean[][] visited;
     int[] dx = {-1, 1, 0, 0};
     int[] dy = {0, 0, 1, -1};
-    String[][] miro;
-    boolean[][] visited;
+    
     public int solution(String[] maps) {
-        miro = new String[maps.length][maps[0].length()];
+        board = new String[maps.length][maps[0].length()];
         visited = new boolean[maps.length][maps[0].length()];
         int[] start = new int[2];
-        int[] levor = new int[2];
+        int[] lavor = new int[2];
+        int[] end   = new int[2];
         for (int i = 0; i < maps.length; i++) {
-            for (int j = 0; j < maps[0].length(); j++) {
-                if (maps[i].charAt(j) == 'S') {
+            for (int j = 0; j < maps[i].length(); j++) {
+                board[i][j] = String.valueOf(maps[i].charAt(j));
+                if (board[i][j].equals("S")) {
                     start[0] = i;
                     start[1] = j;
                 }
-                
-                if (maps[i].charAt(j) == 'L') {
-                    levor[0] = i;
-                    levor[1] = j;
+                if (board[i][j].equals("L")) {
+                    lavor[0] = i;
+                    lavor[1] = j;
                 }
-                miro[i][j] = String.valueOf(maps[i].charAt(j));
+                if (board[i][j].equals("E")) {
+                    end[0] = i;
+                    end[1] = j;
+                }
             }
         }
         
-        int levor_cost = bfs_levor(start);
-        if (levor_cost == -1) {
+        int result = 0;
+        int firstTime = bfs(start, lavor);
+        if (firstTime == -1) {
             return -1;
+        } else {
+            result += firstTime;
         }
         
         visited = new boolean[maps.length][maps[0].length()];
-        
-        int exit_cost = bfs_exit(levor);
-        if (exit_cost == -1) {
+        int secondTime = bfs(lavor, end);
+        if (secondTime == -1) {
             return -1;
-        }
-        
-        return levor_cost + exit_cost;
-    }
-    
-    public int bfs_levor(int[] start) {
-        Queue<Point> q = new LinkedList<>();
-        q.add(new Point(start[0], start[1], 0, "S"));
-        visited[start[0]][start[1]] = true;
-        int result = -1;
-        
-        while (!q.isEmpty()) {
-            Point now = q.poll();
-            
-            if (now.str.equals("L")) {
-                result = now.cost;
-                break;
-            }
-            
-            for (int i = 0; i < 4; i++) {
-                int nextX = now.x + dx[i];
-                int nextY = now.y + dy[i];
-                
-                if (nextX >= 0 && nextY >= 0 && nextX < miro.length && nextY < miro[0].length) {
-                    if (!miro[nextX][nextY].equals("X") && !visited[nextX][nextY]) {
-                        visited[nextX][nextY] = true;
-                        q.add(new Point(nextX, nextY, now.cost + 1, miro[nextX][nextY]));
-                    }
-                }
-            }
+        } else {
+            result += secondTime;
         }
         
         return result;
     }
     
-    public int bfs_exit(int[] start) {
-        Queue<Point> q = new LinkedList<>();
-        q.add(new Point(start[0], start[1], 0, "S"));
-        visited[start[0]][start[1]] = true;
+    public int bfs(int[] from, int[] to) {
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{from[0], from[1], 0});
+        visited[from[0]][from[1]] = true;
         int result = -1;
         
-        while (!q.isEmpty()) {
-            Point now = q.poll();
+        while(!q.isEmpty()) {
+            int[] now = q.poll();
             
-            if (now.str.equals("E")) {
-                result = now.cost;
+            if (now[0] == to[0] && now[1] == to[1]) {
+                result = now[2];
                 break;
             }
             
             for (int i = 0; i < 4; i++) {
-                int nextX = now.x + dx[i];
-                int nextY = now.y + dy[i];
+                int nextX = now[0] + dx[i];
+                int nextY = now[1] + dy[i];
                 
-                if (nextX >= 0 && nextY >= 0 && nextX < miro.length && nextY < miro[0].length) {
-                    if (!miro[nextX][nextY].equals("X") && !visited[nextX][nextY]) {
+                if (nextX >= 0 && nextY >= 0 && nextX < board.length && nextY < board[0].length) {
+                    if (!visited[nextX][nextY] && !board[nextX][nextY].equals("X")) {
+                        q.add(new int[]{nextX, nextY, now[2] + 1});
                         visited[nextX][nextY] = true;
-                        q.add(new Point(nextX, nextY, now.cost + 1, miro[nextX][nextY]));
                     }
                 }
             }
         }
+        
         
         return result;
     }
