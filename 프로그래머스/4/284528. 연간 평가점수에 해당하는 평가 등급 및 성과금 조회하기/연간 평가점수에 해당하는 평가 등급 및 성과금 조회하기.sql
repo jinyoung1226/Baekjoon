@@ -1,26 +1,26 @@
-SELECT 
-    E.EMP_NO,
-    E.EMP_NAME,
+SELECT
+    HE.EMP_NO,
+    HE.EMP_NAME,
+    HG.GRADE,
     CASE
-        WHEN G.AVG_SCORE >= 96 THEN 'S'
-        WHEN G.AVG_SCORE >= 90 THEN 'A'
-        WHEN G.AVG_SCORE >= 80 THEN 'B'
-        ELSE 'C'
-    END AS GRADE,
-    CASE
-        WHEN G.AVG_SCORE >= 96 THEN E.SAL * 0.2
-        WHEN G.AVG_SCORE >= 90 THEN E.SAL * 0.15
-        WHEN G.AVG_SCORE >= 80 THEN E.SAL * 0.1
+        WHEN HG.GRADE = 'S' THEN HE.SAL * 0.2
+        WHEN HG.GRADE = 'A' THEN HE.SAL * 0.15
+        WHEN HG.GRADE = 'B' THEN HE.SAL * 0.1
         ELSE 0
     END AS BONUS
-FROM HR_EMPLOYEES E
+FROM HR_EMPLOYEES HE
 JOIN (
-    SELECT 
-        HG.EMP_NO AS EMP_NO,
-        SUM(HG.SCORE) / 2 AS AVG_SCORE
+    SELECT
+        HG.EMP_NO,
+        CASE
+            WHEN SUM(HG.SCORE) / 2 >= 96 THEN 'S'
+            WHEN SUM(HG.SCORE) / 2 >= 90 THEN 'A'
+            WHEN SUM(HG.SCORE) / 2 >= 80 THEN 'B'
+            ELSE 'C'
+        END AS GRADE
     FROM HR_GRADE HG
     GROUP BY HG.EMP_NO
-) AS G
-ON E.EMP_NO = G.EMP_NO
-ORDER BY E.EMP_NO;
+) AS HG
+ON HE.EMP_NO = HG.EMP_NO
+ORDER BY 1 ASC;
 
